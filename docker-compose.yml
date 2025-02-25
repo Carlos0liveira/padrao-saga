@@ -1,0 +1,89 @@
+version: '3'
+
+services:
+
+  order-db:
+    image: mongo:latest
+    container_name: order-db
+    restart: always
+    networks:
+      - orchestrator-saga
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+    ports:
+      - "27017:27017"
+
+  product-db:
+    image: postgres:latest
+    container_name: product-db
+    networks:
+      - orchestrator-saga
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: product-db
+    ports:
+      - "5432:5432"
+
+  payment-db:
+    image: postgres:latest
+    container_name: payment-db
+    networks:
+      - orchestrator-saga
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payment-db
+    ports:
+      - "5433:5432"
+
+  inventory-db:
+    image: postgres:latest
+    container_name: inventory-db
+    networks:
+      - orchestrator-saga
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: inventory-db
+    ports:
+      - "5434:5432"
+
+  kafka:
+    container_name: kafka
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    networks:
+      - orchestrator-saga
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+    networks:
+      - orchestrator-saga
+
+  redpanda-console:
+    container_name: redpanda-console
+    image: docker.redpanda.com/redpandadata/console:latest
+    restart: always
+    ports:
+      - "8081:8080"
+    networks:
+      - orchestrator-saga
+    environment:
+      KAFKA_BROKERS: "kafka:9092"
+    depends_on:
+      - kafka
+
+networks:
+  orchestrator-saga:
+    driver: bridge
