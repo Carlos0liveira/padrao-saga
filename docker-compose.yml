@@ -58,8 +58,15 @@ services:
     networks:
       - orchestrator-saga
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      KAFKA_RESTART_ATTEMPTS: "10"
+      KAFKA_RESTART_DELAY: "5"
+      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
     depends_on:
       - zookeeper
 
@@ -83,6 +90,96 @@ services:
       KAFKA_BROKERS: "kafka:9092"
     depends_on:
       - kafka
+
+  order-service:
+    build:
+      context: './order-service'
+      dockerfile: Dockerfile
+    container_name: order-service
+    depends_on:
+      - order-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - MONGO_DB_URI=mongodb://admin:123456@order-db:27017/admin
+    ports:
+      - "3000:3000"
+
+  orchestrator-service:
+    build:
+      context: './orchestrator-service'
+      dockerfile: Dockerfile
+    container_name: orchestrator-service
+    depends_on:
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+    ports:
+      - "8080:8080"
+
+  product-validation-service:
+    build:
+      context: './product-validation-service'
+      dockerfile: Dockerfile
+    container_name: product-validation-service
+    depends_on:
+      - product-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - DB_HOST=product-db
+      - DB_PORT=5432
+      - DB_NAME=product-db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    ports:
+      - "8090:8090"
+
+  payment-service:
+    build:
+      context: './payment-service'
+      dockerfile: Dockerfile
+    container_name: payment-service
+    depends_on:
+      - product-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - DB_HOST=payment-db
+      - DB_PORT=5432
+      - DB_NAME=payment-db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    ports:
+      - "8091:8091"
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    depends_on:
+      - product-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - DB_HOST=inventory-db
+      - DB_PORT=5432
+      - DB_NAME=inventory-db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    ports:
+      - "8092:8092"
 
 networks:
   orchestrator-saga:
