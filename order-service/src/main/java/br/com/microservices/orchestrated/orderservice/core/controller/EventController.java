@@ -23,7 +23,6 @@ public class EventController {
         return eventService.findByFilters(filters);
     }
 
-
     @GetMapping("/all")
     public List<Event> findAll() {
         return eventService.findAll();
