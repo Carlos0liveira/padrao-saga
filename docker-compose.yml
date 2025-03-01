@@ -87,7 +87,7 @@ services:
     networks:
       - orchestrator-saga
     environment:
-      KAFKA_BROKERS: "kafka:9092"
+      KAFKA_BROKERS: "kafka:29092"
     depends_on:
       - kafka
 

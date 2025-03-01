@@ -24,7 +24,7 @@ public class JsonUtil {
      }
     }
 
-    private Event toEvent(String json) {
+    public Event toEvent(String json) {
         try {
             return objectMapper.readValue(json, Event.class);
         } catch (Exception e) {
