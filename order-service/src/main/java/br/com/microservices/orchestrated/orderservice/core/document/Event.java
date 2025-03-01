@@ -1,5 +1,6 @@
 package br.com.microservices.orchestrated.orderservice.core.document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -29,6 +30,8 @@ public class Event {
     private String source;
 
     private String status;
+
+    private LocalDateTime createdAt;
 
     private List<History> eventHistory;
 }
