@@ -25,8 +25,4 @@ public class EventConsumer {
         var event = jsonUtil.toEvent(payloud);
         eventService.notifyEnding(event);
     }
-
-
-
-
 }

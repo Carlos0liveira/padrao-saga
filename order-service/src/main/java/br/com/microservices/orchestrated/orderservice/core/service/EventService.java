@@ -41,7 +41,7 @@ public class EventService {
         validateEmptyFilters(filters);
 
         if (!isEmpty(filters.getOrderId())) {
-            findByOrderId(filters);
+            return findByOrderId(filters);
         }
 
         return findByTransactionId(filters);
