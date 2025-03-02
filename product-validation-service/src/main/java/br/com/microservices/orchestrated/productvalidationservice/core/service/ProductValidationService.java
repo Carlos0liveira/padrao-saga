@@ -76,8 +76,6 @@ public class ProductValidationService {
         event.setSource(CURRENT_SOURCE);
 
         addHistory(event, "Fail To validate products: ".concat(message));
-
-        createValidation(event, Boolean.FALSE);
     }
 
 
