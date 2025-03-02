@@ -1,5 +1,6 @@
 package br.com.microservices.orchestrated.productvalidationservice.core.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus;
@@ -26,5 +27,9 @@ public class Event {
 
     private ESagaStatus status;
 
-    private List<History> eventHistory;
+    private List<History> eventHistory = new ArrayList<>();
+
+    public void addToHistory(History history) {
+       eventHistory.add(history);
+    }
 }
