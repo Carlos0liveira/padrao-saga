@@ -3,13 +3,11 @@ package br.com.microservices.orchestrated.productvalidationservice.core.service;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import br.com.microservices.orchestrated.productvalidationservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.History;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.OrderProducts;
-import br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus;
 import br.com.microservices.orchestrated.productvalidationservice.core.model.Validation;
 import br.com.microservices.orchestrated.productvalidationservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ProductRepository;

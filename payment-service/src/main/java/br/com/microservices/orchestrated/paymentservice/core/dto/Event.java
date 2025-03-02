@@ -27,4 +27,8 @@ public class Event {
     private ESagaStatus status;
 
     private List<History> eventHistory;
+
+    public void addToHistory(History history) {
+        eventHistory.add(history);
+    }
 }
